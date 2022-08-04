@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 data_path = Path('../../data')
-results_path = Path('../testresults')
+results_path = Path('../results')
 
 def parse_args():
     parser = argparse.ArgumentParser()
