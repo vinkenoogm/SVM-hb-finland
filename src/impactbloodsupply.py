@@ -32,7 +32,7 @@ def get_first_pos_pred(x, fulldf):
     else:
         return(x[firstcol:-2][x[firstcol:-2] == 1].index[0][10:])
 
-def gather_results(sex, nbacks, foldersuffix=''):
+def gather_results(sex, nbacks, foldersuffix):
     df = list()
     for nback in nbacks:
         scaler = pickle.load(open(results_path / f'scalers{foldersuffix}/{sex}_{nback}.pkl', 'rb'))
@@ -127,8 +127,8 @@ def print_impact(args, df_intervals, output_path):
         f.write('\n'.join(lines))
     
 def main(args):
-    df_f = gather_results('women', range(5, 1, -1))
-    df_m = gather_results('men', range(5, 1, -1))
+    df_f = gather_results('women', range(5, 1, -1), args.foldersuffix)
+    df_m = gather_results('men', range(5, 1, -1), args.foldersuffix)
     
     output_path = results_path / f'pred_timechange{args.foldersuffix}'
     output_path.mkdir(parents=True, exist_ok=True)

@@ -8,8 +8,7 @@ import shap
 
 import matplotlib.pyplot as plt
 
-results_path = Path('../results/shap/')
-plot_path = Path('../results/plots_shap/')
+plot_path = Path('../testresults/plots_shap/')
 plot_path.mkdir(parents=True, exist_ok=True)
 
 def parse_args():
@@ -26,6 +25,7 @@ def parse_args():
     return args
 
 def main(args):
+    results_path = Path(f'../testresults/shap{args.foldersuffix}/')
     filename1 = f'Xshap_{args.sex}_{args.nback}_{args.n}.pkl'
     filename2 = f'shapvals_{args.sex}_{args.nback}_{args.n}.pkl'
 
