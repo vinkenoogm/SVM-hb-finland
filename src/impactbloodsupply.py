@@ -119,6 +119,8 @@ def print_impact(args, df_intervals, output_path):
     lines = []
     lines.append(f'Median donation interval for men goes from {median_old_m} to {median_new_m} days.')
     lines.append(f'Median donation interval for women goes from {median_old_f} to {median_new_f} days.')
+    
+    print(sum(df_ints['DaysSinceHb1']), sum(df_ints['DaystoPrevNew']))
 
     visits_relative = (sum(df_ints['DaysSinceHb1'])) / (sum(df_ints['DaystoPrevNew']))
     lines.append(f'Number of blood bank visits increases by {round((visits_relative-1)*100)}%.')
@@ -132,11 +134,13 @@ def main(args):
     
     output_path = results_path / f'pred_timechange{args.foldersuffix}'
     output_path.mkdir(parents=True, exist_ok=True)
+    
+    hbpredcols = ['HbPrev1', 'DaysSinceHb1'] + [col for col in df_f if col.startswith('HbOK')] + ['first_possible_donation', 'first_possible_invite', 'first_pos_pred']
 
-    df_f = df_f.drop(columns=list(df_f.columns[:10]) + list(df_f.columns[12:20])).reset_index()
+    df_f = df_f[hbpredcols].copy()
     df_f.to_pickle(output_path / 'predictions_women.pkl')
 
-    df_m = df_m.drop(columns=list(df_m.columns[:10]) + list(df_m.columns[12:20])).reset_index()
+    df_m = df_m[hbpredcols].copy()
     df_m.to_pickle(output_path / 'predictions_men.pkl')
     
     plot_newinvites(args, df_f, df_m, save='invites_datechange')

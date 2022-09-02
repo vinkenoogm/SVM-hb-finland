@@ -124,7 +124,7 @@ if __name__ == '__main__':
     model_training = False
     model_performance = False
     shap_values = False
-    shap_plots = True
+    shap_plots = False
     changing_time = False
     impact_bloodsupply = True
     main()
