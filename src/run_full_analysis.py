@@ -4,6 +4,7 @@ import modeltraining
 import modelperformance
 import calcshap
 import plotshap
+import anonymizeshap
 import changingtime
 import impactbloodsupply
 
@@ -95,6 +96,17 @@ def main():
 
         now = datetime.now().replace(microsecond=0)
         print(f'All SHAP plots saved. \n--Time elapsed: {now - start} \n--Total time elapsed: {now - firststart}\n')
+        
+    if shap_anon:
+        # Anonymizing SHAP values
+        start = datetime.now().replace(microsecond=0)
+        print(f'Anonymizing SHAP values for all models. \n--Started at: {start}')
+
+        with Pool(len(list_args_shap)) as pool:
+            results = pool.map(anonymizeshap.main, list_args_shap)
+
+        now = datetime.now().replace(microsecond=0)
+        print(f'SHAP values for all models are anonymized and saved. \n--Time elapsed: {now - start} \n--Total time elapsed: {now - firststart}\n')
 
     if changing_time:
         # Predictions at different timepoints
@@ -125,7 +137,8 @@ if __name__ == '__main__':
     model_performance = False
     shap_values = False
     shap_plots = False
+    shap_anon = True
     changing_time = False
-    impact_bloodsupply = True
+    impact_bloodsupply = False
     main()
 
