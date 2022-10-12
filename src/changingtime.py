@@ -41,7 +41,7 @@ def main(args):
     y_pred_first = make_preds(data, clf)
     data_res['HbOK_pred'] = y_pred_first
 
-    timecols = []
+    timecols = ['DaysSinceFirstDon']
     for n in range(1, args.nback+1):
         timecols.extend(['DaysSinceHb'+str(n)])
 

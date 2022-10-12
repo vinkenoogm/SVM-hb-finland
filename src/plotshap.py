@@ -8,7 +8,7 @@ import shap
 
 import matplotlib.pyplot as plt
 
-plot_path = Path('../results/plots_shap/')
+plot_path = Path('../results/plots_shap')
 plot_path.mkdir(parents=True, exist_ok=True)
 
 def parse_args():

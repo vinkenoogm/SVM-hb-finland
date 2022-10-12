@@ -131,14 +131,14 @@ def main():
         print(f'Results saved. \n--Time elapsed: {now - start} \n--Total time elapsed: {now - firststart}\n')
 
 if __name__ == '__main__':
-    preprocess = False
-    hyperparam_tuning = False
-    model_training = False
-    model_performance = False
-    shap_values = False
-    shap_plots = False
+    preprocess = True
+    hyperparam_tuning = True
+    model_training = True
+    model_performance = True
+    shap_values = True
+    shap_plots = True
     shap_anon = True
-    changing_time = False
-    impact_bloodsupply = False
+    changing_time = True
+    impact_bloodsupply = True
     main()
 

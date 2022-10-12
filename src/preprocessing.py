@@ -17,6 +17,8 @@ def add_variables(df):
     df['year'] = df['date'].dt.year
     df['month'] = df['date'].dt.month
     df['successful_don'] = df['Hb_deferral'] == 0
+    df['date_of_first_donation'] = pd.to_datetime(df['date_of_first_donation'], format='%Y-%m-%d') 
+    df['DaysSinceFirstDon'] = (df['date'] - df['date_of_first_donation']) / pd.Timedelta('1d')
     df = df.sort_values(['vdonor', 'date']).reset_index(drop=True)
     return df
 
@@ -39,7 +41,7 @@ def add_numdon(df):
 
 def split_train_test(df):
     # Splitting into train and test sets based on date (last year is test set)
-    var = ['vdonor', 'date', 'sex', 'year', 'age', 'month', 'NumDon', 'smoking', 'height', 'weight', 'bmi', 
+    var = ['vdonor', 'date', 'sex', 'year', 'age', 'month', 'NumDon', 'DaysSinceFirstDon', 'smoking', 'height', 'weight', 'bmi', 
            'snp_17_58358769', 'snp_6_32617727', 'snp_15_45095352', 'snp_1_169549811', 'prs_anemia', 'prs_ferritin',
            'prs_hemoglobin']
     for n in range(1, 6):
@@ -100,7 +102,7 @@ def main():
     data = pd.read_pickle(data_path / 'alldata.pkl')
     ## TO USE FAKE TESTING DATA: put fakedata.csv in data folder, comment previous line out
     ## uncomment following line:
-    #data = pd.read_csv(data_path / 'fakedata.csv')
+    # data = pd.read_csv(data_path / 'fakedata_finland.csv')
     df = add_variables(data)
     
     # We will use donations from >2015, first select 2 more years to calculate donations in last 24 months
@@ -124,14 +126,14 @@ def main():
 
     # Scaled train/test sets for Hb variables + genetic data
     save_scaled_train_test_sets(train_men, test_men, train_women, test_women, 
-                                predvars=['age', 'month', 'NumDon', 
+                                predvars=['age', 'month', 'NumDon', 'DaysSinceFirstDon',
                                           'snp_17_58358769', 'snp_6_32617727', 'snp_15_45095352', 
                                           'snp_1_169549811', 'prs_anemia', 'prs_ferritin', 'prs_hemoglobin'], 
                                 foldersuffix='')
 
     # Scaled train/test sets for Hb variables only
     save_scaled_train_test_sets(train_men, test_men, train_women, test_women, 
-                                predvars=['age', 'month', 'NumDon'], 
+                                predvars=['age', 'month', 'NumDon', 'DaysSinceFirstDon'], 
                                 foldersuffix='_hbonly')
     
 if __name__ == '__main__':

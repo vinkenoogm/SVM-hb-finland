@@ -135,7 +135,7 @@ def main(args):
     output_path = results_path / f'pred_timechange{args.foldersuffix}'
     output_path.mkdir(parents=True, exist_ok=True)
     
-    hbpredcols = ['HbPrev1', 'DaysSinceHb1'] + [col for col in df_f if col.startswith('HbOK')] + ['first_possible_donation', 'first_possible_invite', 'first_pos_pred']
+    hbpredcols = ['HbPrev1', 'DaysSinceHb1'] + [col for col in df_f if col.startswith('HbOK') or col.startswith('snp')] + ['first_possible_donation', 'first_possible_invite', 'first_pos_pred']
 
     df_f = df_f[hbpredcols].copy()
     df_f.to_pickle(output_path / 'predictions_women.pkl')
