@@ -7,6 +7,7 @@ import plotshap
 import anonymizeshap
 import changingtime
 import impactbloodsupply
+import marginaldistributions
 
 from argparse import Namespace
 from datetime import datetime
@@ -129,6 +130,8 @@ def main():
 
         now = datetime.now().replace(microsecond=0)
         print(f'Results saved. \n--Time elapsed: {now - start} \n--Total time elapsed: {now - firststart}\n')
+        
+    marginaldistributions.main()
 
 if __name__ == '__main__':
     preprocess = True
