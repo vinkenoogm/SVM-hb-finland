@@ -9,6 +9,8 @@ data_path = Path('../../data/scaled')
 scaler_path = Path('../results/scalers')
 output_path = Path('../results/distributions')
 output_path.mkdir(parents=True, exist_ok=True)
+output_path2 = output_path / 'distributions_by_var'
+output_path2.mkdir(parents=True, exist_ok=True)
 
 def load_data(data_path, scaler_path, sex):
     dfs = []
@@ -64,7 +66,17 @@ def main():
         
         for nback, subdf in enumerate(dfs):
             subdistrs = marginal_distrs(subdf)
-            pickle.dump(distrs, open(output_path / f'distributions_{sex}_{nback+1}.pkl', 'wb'))
+            pickle.dump(subdistrs, open(output_path / f'distributions_{sex}_{nback+1}.pkl', 'wb'))
+            
+        for snp1, snp6, snp15, snp17 in product('012', repeat=4):
+            df_sub = df.loc[(df.snp_1_169549811 == snp1) & 
+                            (df.snp_6_32617727 == snp6) & 
+                            (df.snp_15_45095352 == snp15) & 
+                            (df.snp_17_58358769 == snp17), ]
+            subdistrs = marginal_distrs(df_sub)
+            pickle.dump(subdistrs, open(output_path2 / f'distr_{sex}_snps_{snp1}{snp6}{snp15}{snp17}.pkl', 'wb'))
+
+                
             
 if __name__ == '__main__':
     main()
