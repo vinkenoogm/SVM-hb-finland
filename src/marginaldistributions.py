@@ -69,10 +69,10 @@ def main():
             pickle.dump(subdistrs, open(output_path / f'distributions_{sex}_{nback+1}.pkl', 'wb'))
             
         for snp1, snp6, snp15, snp17 in product('012', repeat=4):
-            df_sub = df.loc[(df.snp_1_169549811 == snp1) & 
-                            (df.snp_6_32617727 == snp6) & 
-                            (df.snp_15_45095352 == snp15) & 
-                            (df.snp_17_58358769 == snp17), ]
+            df_sub = df.loc[(df.snp_1_169549811 == int(snp1)) & 
+                            (df.snp_6_32617727 == int(snp6)) & 
+                            (df.snp_15_45095352 == int(snp15)) & 
+                            (df.snp_17_58358769 == int(snp17)), ]
             subdistrs = marginal_distrs(df_sub)
             pickle.dump(subdistrs, open(output_path2 / f'distr_{sex}_snps_{snp1}{snp6}{snp15}{snp17}.pkl', 'wb'))
 
