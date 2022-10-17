@@ -99,10 +99,34 @@ def save_scaled_train_test_sets(train_men, test_men, train_women, test_women, pr
 
         
 def main():
-    data = pd.read_pickle(data_path / 'alldata.pkl')
+    # Load raw data files    
+    data_last = pd.read_csv(data_path / 'lastdon.csv', low_memory=False)
+    data_all = pd.read_csv(data_path / 'vdonationc.csv', low_memory=False)
+    data_raw = data_all.merge(data_last[['vdonor', 'height', 'weight', 'smoking', 'bmi', 
+                                         'snp_17_58358769', 'snp_6_32617727', 'snp_15_45095352',
+                                         'snp_1_169549811', 'prs_anemia', 'prs_ferritin', 'prs_hemoglobin', 'date_of_first_donation']], 
+                              how='inner',
+                              on='vdonor')
+
+    # Drop unused variables, add date/month/year variables for train/test selection later
+    data = data_raw.copy().drop(columns=['Unnamed: 0', 'zip', 'city', 'site', 'aborh'])
+    data['date'] = pd.to_datetime(data['date'])
+    data['year'] = data['date'].dt.year
+    data['month'] = data['date'].dt.month
+    data['successful_don'] = data['donat_phleb'] == 'K'
+    data = data.sort_values(['vdonor', 'date']).reset_index(drop=True)
+
+    # Keep only successful whole-blood donations and Hb deferrals
+    data = data.loc[(data.donat_phleb == 'K') | ((data.donat_phleb == '*') & (data.Hb_deferral == 1)), ]
+    data = data.drop(columns=['status','donat_phleb'])
+    data.to_pickle(data_path / 'alldata_firstdondate.pkl')
+
+    # data = pd.read_pickle(data_path / 'alldata.pkl')
+    
     ## TO USE FAKE TESTING DATA: put fakedata.csv in data folder, comment previous line out
     ## uncomment following line:
     # data = pd.read_csv(data_path / 'fakedata_finland.csv')
+    
     df = add_variables(data)
     
     # We will use donations from >2015, first select 2 more years to calculate donations in last 24 months
