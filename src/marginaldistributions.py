@@ -5,7 +5,7 @@ from pathlib import Path
 from sklearn.preprocessing import StandardScaler
 from itertools import product
 
-data_path = Path('../../data/scaled')
+data_path = Path('../../data')
 scaler_path = Path('../results/scalers')
 output_path = Path('../results/distributions')
 output_path.mkdir(parents=True, exist_ok=True)
@@ -58,23 +58,41 @@ def marginal_distrs(data):
             distrs['errorcols'].append(col) 
     return distrs
 
+def hb_distr_by_donor(data):
+    grouped = data.groupby('vdonor')
+    res = []
+    for name, group in grouped:
+        hbmean = np.mean(group['HbPrev1'])
+        hbvar = np.var(group['HbPrev1'])
+        sex = list(group['sex'])[0]
+        snp_1 = list(group['snp_1_169549811'])[0]
+        snp_6 = list(group['snp_6_32617727'])[0]
+        snp_15 = list(group['snp_15_45095352'])[0]
+        snp_17 = list(group['snp_17_58358769'])[0]
+        res.append([sex, hbmean, hbvar, snp_1, snp_6, snp_15, snp_17])
+    df = pd.DataFrame(res, columns=['sex', 'hbmean', 'hbvar', 'snp_1', 'snp_6', 'snp_15', 'snp_17'])
+    return df
+    
+
 def main():
-    for sex in ['men', 'women']:
-        dfs, df = load_data(data_path, scaler_path, sex)
-        distrs = marginal_distrs(df)
-        pickle.dump(distrs, open(output_path / f'distributions_{sex}_all.pkl', 'wb'))
+    df = pd.read_pickle(data_path / 'df_2016_2020.pkl')
+    hb_distrs = hb_distr_by_donor(df)
+    hb_distrs.to_pickle(output_path / f'hb_distrs_by_donor.pkl')
+#     for sex in ['men', 'women']:        
+#         distrs = marginal_distrs(df)
+#         pickle.dump(distrs, open(output_path / f'distributions_{sex}_all.pkl', 'wb'))
         
-        for nback, subdf in enumerate(dfs):
-            subdistrs = marginal_distrs(subdf)
-            pickle.dump(subdistrs, open(output_path / f'distributions_{sex}_{nback+1}.pkl', 'wb'))
+#         for nback, subdf in enumerate(dfs):
+#             subdistrs = marginal_distrs(subdf)
+#             pickle.dump(subdistrs, open(output_path / f'distributions_{sex}_{nback+1}.pkl', 'wb'))
             
-        for snp1, snp6, snp15, snp17 in product('012', repeat=4):
-            df_sub = df.loc[(df.snp_1_169549811 == int(snp1)) & 
-                            (df.snp_6_32617727 == int(snp6)) & 
-                            (df.snp_15_45095352 == int(snp15)) & 
-                            (df.snp_17_58358769 == int(snp17)), ]
-            subdistrs = marginal_distrs(df_sub)
-            pickle.dump(subdistrs, open(output_path2 / f'distr_{sex}_snps_{snp1}{snp6}{snp15}{snp17}.pkl', 'wb'))
+#         for snp1, snp6, snp15, snp17 in product('012', repeat=4):
+#             df_sub = df.loc[(df.snp_1_169549811 == int(snp1)) & 
+#                             (df.snp_6_32617727 == int(snp6)) & 
+#                             (df.snp_15_45095352 == int(snp15)) & 
+#                             (df.snp_17_58358769 == int(snp17)), ]
+#             subdistrs = marginal_distrs(df_sub)
+#             pickle.dump(subdistrs, open(output_path2 / f'distr_{sex}_snps_{snp1}{snp6}{snp15}{snp17}.pkl', 'wb'))
 
                 
             
