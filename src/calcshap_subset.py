@@ -32,19 +32,26 @@ def calc_shap(args):
     filename = results_path / f'models{args.foldersuffix}/clf_{args.sex}_{args.nback}.sav'
     clf = pickle.load(open(filename, 'rb'))
     
-    test = pd.read_pickle(data_path / f'scaled{args.foldersuffix}/{args.sex}_{args.nback}_test.pkl')
+    test = pd.read_pickle(data_path / f'scaled/{args.sex}_{args.nback}_test.pkl')
     X_test = test[test.columns[:-1]]
     
-    scaler = pd.read_pickle(results_path / f'scalers{args.foldersuffix}/{args.sex}_{args.nback}.pkl')
+    scaler = pd.read_pickle(results_path / f'scalers/{args.sex}_{args.nback}.pkl')
     sc_index = list(scaler.feature_names_in_).index('snp_17_58358769')
     sc_mean = scaler.mean_[sc_index]
     sc_scale = scaler.scale_[sc_index]
     
-    sc_lim = 0.6 * sc_scale + sc_mean
-    X_shap_snp1 = X_test.loc[X_test['snp_17_58358769'] > sc_lim, ]
-    X_shap_snp0 = shap.sample(X_test.loc[X_test['snp_17_58358769'] < sc_lim, ], X_shap_snp1.shape[0])
+    sc_lim = (0.6 - sc_mean) / sc_scale
+    X_shap_snp1 = shap.sample(X_test.loc[X_test['snp_17_58358769'] > sc_lim, ], args.n)
+    X_shap_snp0 = shap.sample(X_test.loc[X_test['snp_17_58358769'] < sc_lim, ], args.n)
+    
+    if args.foldersuffix == '_hbonly':
+        X_shap_snp1 = X_shap_snp1.drop(columns=['snp_17_58358769', 'snp_6_32617727', 'snp_15_45095352', 
+                                                'snp_1_169549811', 'prs_anemia', 'prs_ferritin', 'prs_hemoglobin'])
+        X_shap_snp0 = X_shap_snp0.drop(columns=['snp_17_58358769', 'snp_6_32617727', 'snp_15_45095352', 
+                                                'snp_1_169549811', 'prs_anemia', 'prs_ferritin', 'prs_hemoglobin'])
     
     for name, X_shap in zip(['snp1', 'snp0'], [X_shap_snp1, X_shap_snp0]):
+        print(name, X_shap.shape)
         explainer = shap.KernelExplainer(clf.predict, X_shap)
         shapvals = explainer.shap_values(X_shap)
 
