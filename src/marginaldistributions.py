@@ -64,13 +64,14 @@ def hb_distr_by_donor(data):
     for name, group in grouped:
         hbmean = np.mean(group['HbPrev1'])
         hbvar = np.var(group['HbPrev1'])
+        nvisits = group.shape[0]
         sex = list(group['sex'])[0]
         snp_1 = list(group['snp_1_169549811'])[0]
         snp_6 = list(group['snp_6_32617727'])[0]
         snp_15 = list(group['snp_15_45095352'])[0]
         snp_17 = list(group['snp_17_58358769'])[0]
-        res.append([sex, hbmean, hbvar, snp_1, snp_6, snp_15, snp_17])
-    df = pd.DataFrame(res, columns=['sex', 'hbmean', 'hbvar', 'snp_1', 'snp_6', 'snp_15', 'snp_17'])
+        res.append([sex, hbmean, hbvar, nvisits, snp_1, snp_6, snp_15, snp_17])
+    df = pd.DataFrame(res, columns=['sex', 'hbmean', 'hbvar', 'nvisits', 'snp_1', 'snp_6', 'snp_15', 'snp_17'])
     return df
     
 
