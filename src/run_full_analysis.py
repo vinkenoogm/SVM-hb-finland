@@ -146,7 +146,7 @@ def main():
     # marginaldistributions.main()
 
 if __name__ == '__main__':
-    preprocess = False
+    preprocess = True
     hyperparam_tuning = False
     model_training = False
     model_performance = False

@@ -104,7 +104,7 @@ def main():
     data_all = pd.read_csv(data_path / 'vdonationc.csv', low_memory=False)
     data_raw = data_all.merge(data_last[['vdonor', 'height', 'weight', 'smoking', 'bmi', 
                                          'snp_17_58358769', 'snp_6_32617727', 'snp_15_45095352',
-                                         'snp_1_169549811', 'prs_anemia', 'prs_ferritin', 'prs_hemoglobin', 'date_of_first_donation']], 
+                                         'snp_1_169549811', 'prs_anemia', 'prs_ferritin', 'prs_hemoglobin']], 
                               how='inner',
                               on='vdonor')
 
@@ -119,9 +119,9 @@ def main():
     # Keep only successful whole-blood donations and Hb deferrals
     data = data.loc[(data.donat_phleb == 'K') | ((data.donat_phleb == '*') & (data.Hb_deferral == 1)), ]
     data = data.drop(columns=['status','donat_phleb'])
-    data.to_pickle(data_path / 'alldata_firstdondate.pkl')
+    data.to_pickle(data_path / 'alldata.pkl')
 
-    # data = pd.read_pickle(data_path / 'alldata.pkl')
+    data = pd.read_pickle(data_path / 'alldata.pkl')
     
     ## TO USE FAKE TESTING DATA: put fakedata.csv in data folder, comment previous line out
     ## uncomment following line:
@@ -150,14 +150,14 @@ def main():
 
     # Scaled train/test sets for Hb variables + genetic data
     save_scaled_train_test_sets(train_men, test_men, train_women, test_women, 
-                                predvars=['age', 'month', 'NumDon', 'DaysSinceFirstDon',
+                                predvars=['age', 'month', 'NumDon',
                                           'snp_17_58358769', 'snp_6_32617727', 'snp_15_45095352', 
                                           'snp_1_169549811', 'prs_anemia', 'prs_ferritin', 'prs_hemoglobin'], 
                                 foldersuffix='')
 
     # Scaled train/test sets for Hb variables only
     save_scaled_train_test_sets(train_men, test_men, train_women, test_women, 
-                                predvars=['age', 'month', 'NumDon', 'DaysSinceFirstDon'], 
+                                predvars=['age', 'month', 'NumDon'], 
                                 foldersuffix='_hbonly')
     
 if __name__ == '__main__':

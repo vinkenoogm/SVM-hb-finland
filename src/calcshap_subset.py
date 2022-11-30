@@ -64,11 +64,11 @@ def calc_shap(args):
         pickle.dump(shapvals, open(output_path / filename2, 'wb'))
         
 def anon_shap(args):
-    input_path = results_path / f'shap{args.foldersuffix}/'
+    input_path = results_path / f'shap_subset{args.foldersuffix}/'
     
     for name in ['snp1', 'snp0']:
-        filename1 = f'Xshap_{name}_{args.sex}_{args.nback}_{args.n}.pkl'
-        filename2 = f'shapvals_{name}_{args.sex}_{args.nback}_{args.n}.pkl'
+        filename1 = f'Xshap_{name}_{args.sex}_{args.nback}.pkl'
+        filename2 = f'shapvals_{name}_{args.sex}_{args.nback}.pkl'
 
         Xshap = pd.read_pickle(input_path / filename1)
         shapvals = pd.read_pickle(input_path / filename2)
