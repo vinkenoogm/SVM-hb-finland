@@ -17,8 +17,8 @@ def add_variables(df):
     df['year'] = df['date'].dt.year
     df['month'] = df['date'].dt.month
     df['successful_don'] = df['Hb_deferral'] == 0
-    df['date_of_first_donation'] = pd.to_datetime(df['date_of_first_donation'], format='%Y-%m-%d') 
-    df['DaysSinceFirstDon'] = (df['date'] - df['date_of_first_donation']) / pd.Timedelta('1d')
+    #df['date_of_first_donation'] = pd.to_datetime(df['date_of_first_donation'], format='%Y-%m-%d') 
+    #df['DaysSinceFirstDon'] = (df['date'] - df['date_of_first_donation']) / pd.Timedelta('1d')
     df = df.sort_values(['vdonor', 'date']).reset_index(drop=True)
     return df
 
