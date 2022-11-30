@@ -41,7 +41,7 @@ def add_numdon(df):
 
 def split_train_test(df):
     # Splitting into train and test sets based on date (last year is test set)
-    var = ['vdonor', 'date', 'sex', 'year', 'age', 'month', 'NumDon', 'DaysSinceFirstDon', 'smoking', 'height', 'weight', 'bmi', 
+    var = ['vdonor', 'date', 'sex', 'year', 'age', 'month', 'NumDon', 'smoking', 'height', 'weight', 'bmi', 
            'snp_17_58358769', 'snp_6_32617727', 'snp_15_45095352', 'snp_1_169549811', 'prs_anemia', 'prs_ferritin',
            'prs_hemoglobin']
     for n in range(1, 6):
