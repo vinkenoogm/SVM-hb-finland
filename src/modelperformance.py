@@ -11,6 +11,9 @@ from sklearn.metrics import precision_recall_curve, average_precision_score
 
 data_path = Path('../../data')
 results_path = Path('../results')
+# data_path = Path('../data')
+# results_path = Path('../testresults')
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -122,34 +125,52 @@ def plot_prs(probas, def_f, def_m, save=False):
         plot_path = results_path / 'plots_performance/'
         plot_path.mkdir(parents=True, exist_ok=True)
         plt.savefig(plot_path / f'{save}.png')
-    
-def main(args):
-    res_df = pretty_results([f'res_{sex}_{nback}' for sex in ['men','women'] for nback in range(1,6)], args)
-    res_df = get_scores(res_df)
-
-    plot_precision_recall(res_df, 'ok_precision', (0.95, 1), 'Precision\nclass no deferral', args, save='ok_precision')
-    plot_precision_recall(res_df, 'ok_recall', (0, 1), 'Recall\nclass no deferral', args, save='ok_recall')
-    plot_precision_recall(res_df, 'low_precision', (0, 0.15), 'Precision\nclass deferral', args, save='low_precision')
-    plot_precision_recall(res_df, 'low_recall', (0, 1), 'Recall\nclass deferral', args, save='low_recall')
-    
-    sexes = ['men', 'women']
-    nbacks = range(1, 6)
-
-    for sex, nback in product(sexes, nbacks):
+        
+def pred_by_snp(args):
+    for sex, nback in product(['men', 'women'], range(1, 6)):
         clf = pickle.load(open(results_path / f'models{args.foldersuffix}/clf_{sex}_{nback}.sav', 'rb'))
         test = pd.read_pickle(data_path / f'scaled{args.foldersuffix}/{sex}_{nback}_test.pkl')
-        y_true = test[test.columns[-1:]].copy()
-        y_pred = clf.predict_proba(test[test.columns[:-1]])
-        y_true[['prob_low', 'prob_ok']] = y_pred
-
-        output_path = results_path / f'probas{args.foldersuffix}'
+        y_pred = clf.predict(test[test.columns[:-1]])
+        
+        output_path = results_path / f'models{args.foldersuffix}'
         output_path.mkdir(parents=True, exist_ok=True)
-        pickle.dump(y_true, open(output_path / f'proba_{sex}_{nback}.pkl', 'wb'))
+        test2 = pd.read_pickle(data_path / f'scaled/{sex}_{nback}_test.pkl')
+        test2['HbOK_pred'] = y_pred
+        df_save = test2[['snp_1_169549811', 'snp_6_32617727', 'snp_15_45095352', 'snp_17_58358769', 'HbOK', 'HbOK_pred']]
+        df_save.to_pickle(output_path / f'preds_{sex}_{nback}.pkl')
     
-    proba_m = pd.read_pickle(results_path / f'probas{args.foldersuffix}/proba_men_1.pkl')
-    proba_f = pd.read_pickle(results_path / f'probas{args.foldersuffix}/proba_women_1.pkl')
-    def_m = 1-np.mean(proba_m.HbOK)
-    def_f = 1-np.mean(proba_f.HbOK)
+def main(args):
+#     res_df = pretty_results([f'res_{sex}_{nback}' for sex in ['men','women'] for nback in range(1,6)], args)
+#     res_df = get_scores(res_df)
 
-    probas = load_probas(args)
-    plot_prs(probas, def_f, def_m, save=f'PR_curve{args.foldersuffix}')
+#     plot_precision_recall(res_df, 'ok_precision', (0.95, 1), 'Precision\nclass no deferral', args, save='ok_precision')
+#     plot_precision_recall(res_df, 'ok_recall', (0, 1), 'Recall\nclass no deferral', args, save='ok_recall')
+#     plot_precision_recall(res_df, 'low_precision', (0, 0.15), 'Precision\nclass deferral', args, save='low_precision')
+#     plot_precision_recall(res_df, 'low_recall', (0, 1), 'Recall\nclass deferral', args, save='low_recall')
+    
+#     sexes = ['men', 'women']
+#     nbacks = range(1, 6)
+
+#     for sex, nback in product(sexes, nbacks):
+#         clf = pickle.load(open(results_path / f'models{args.foldersuffix}/clf_{sex}_{nback}.sav', 'rb'))
+#         test = pd.read_pickle(data_path / f'scaled{args.foldersuffix}/{sex}_{nback}_test.pkl')
+#         y_true = test[test.columns[-1:]].copy()
+#         y_pred = clf.predict_proba(test[test.columns[:-1]])
+#         y_true[['prob_low', 'prob_ok']] = y_pred
+
+#         output_path = results_path / f'probas{args.foldersuffix}'
+#         output_path.mkdir(parents=True, exist_ok=True)
+#         pickle.dump(y_true, open(output_path / f'proba_{sex}_{nback}.pkl', 'wb'))
+    
+#     proba_m = pd.read_pickle(results_path / f'probas{args.foldersuffix}/proba_men_1.pkl')
+#     proba_f = pd.read_pickle(results_path / f'probas{args.foldersuffix}/proba_women_1.pkl')
+#     def_m = 1-np.mean(proba_m.HbOK)
+#     def_f = 1-np.mean(proba_f.HbOK)
+
+#     probas = load_probas(args)
+#     plot_prs(probas, def_f, def_m, save=f'PR_curve{args.foldersuffix}')
+    pred_by_snp(args)
+    
+if __name__ == '__main__':
+    args = parse_args()
+    main(args)

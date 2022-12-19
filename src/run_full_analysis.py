@@ -143,18 +143,18 @@ def main():
         now = datetime.now().replace(microsecond=0)
         print(f'SHAP values for SNP subsets all models are calculated, anonymized and saved. \n--Time elapsed: {now - start} \n--Total time elapsed: {now - firststart}\n')
         
-    # marginaldistributions.main()
+    marginaldistributions.main()
 
 if __name__ == '__main__':
-    preprocess = True
+    preprocess = False
     hyperparam_tuning = False
     model_training = False
-    model_performance = False
+    model_performance = True
     shap_values = False
     shap_anon = False
     shap_plots = False
     changing_time = False
     impact_bloodsupply = False
-    shap_subset = True
+    shap_subset = False
     main()
 
