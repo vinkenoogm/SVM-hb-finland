@@ -26,7 +26,7 @@ def main():
     
     options_shap = {'nback': [1,2,3,4,5], 
                    'sex': ['men','women'], 
-                   'n': [100],
+                   'n': [500],
                    'foldersuffix': ['', '_hbonly']}
     combs_shap = [x for x in product(*options_shap.values())]
     list_args_shap = [Namespace(**dict(zip(options_shap.keys(), p))) for p in combs_shap]    
@@ -149,9 +149,9 @@ if __name__ == '__main__':
     preprocess = False
     hyperparam_tuning = False
     model_training = False
-    model_performance = True
-    shap_values = False
-    shap_anon = False
+    model_performance = False
+    shap_values = True
+    shap_anon = True
     shap_plots = False
     changing_time = False
     impact_bloodsupply = False

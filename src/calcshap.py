@@ -17,7 +17,7 @@ def parse_args():
                         help='[int] number of previous Hb values to use in prediction')
     parser.add_argument('sex', type=str, choices=['men', 'women'],
                         help='[men/women] sex to use in model')
-    parser.add_argument('--n', type=int, default=100,
+    parser.add_argument('--n', type=int, default=500,
                         help='[int] number of donors to calculate SHAP values on')
     parser.add_argument('--foldersuffix', type=str, default='',
                         help='[str] optional suffix indicating non-default run')
@@ -33,7 +33,7 @@ def calc_shap(args):
     X_test = test[test.columns[:-1]]
     X_shap = shap.sample(X_test, args.n)
     explainer = shap.KernelExplainer(clf.predict, X_shap)
-    shapvals = explainer.shap_values(X_shap, nsamples=50)
+    shapvals = explainer.shap_values(X_shap)
     
     output_path = results_path / f'shap{args.foldersuffix}/'
     output_path.mkdir(parents=True, exist_ok=True)
