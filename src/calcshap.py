@@ -33,7 +33,7 @@ def calc_shap(args):
     X_test = test[test.columns[:-1]]
     X_shap = shap.sample(X_test, args.n)
     explainer = shap.KernelExplainer(clf.predict, X_shap)
-    shapvals = explainer.shap_values(X_shap)
+    shapvals = explainer.shap_values(X_shap, nsamples=100)
     
     output_path = results_path / f'shap{args.foldersuffix}/'
     output_path.mkdir(parents=True, exist_ok=True)
